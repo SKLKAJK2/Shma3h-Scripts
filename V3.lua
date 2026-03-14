@@ -1,15 +1,24 @@
 --[[
-    SHMA3H ULTIMATE V6 - ALL-IN-ONE SCRIPT
+    SHMA3H ULTIMATE V7 - ANTI-AFK & GLOBAL BRING
     Signature: made by : shma3h
     User ID: 1423181773906378814
+    Code signed by: shma3h
 ]]
 
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local UIS = game:GetService("UserInputService")
+local VirtualUser = game:GetService("VirtualUser")
+
+-- [[ ميزة Anti-AFK لضمان عدم الطرد ]]
+Player.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+    print("Anti-AFK: تم منع الطرد التلقائي")
+end)
 
 local ScreenGui = Instance.new("ScreenGui", Player.PlayerGui)
-ScreenGui.Name = "Shma3hV6_Final"
+ScreenGui.Name = "Shma3hV7_Final"
 ScreenGui.ResetOnSpawn = false
 
 -- [[ نظام التنسيق - ستروك ناعم ]]
@@ -93,7 +102,7 @@ local PowerPg = CreatePage("Power")
 local TargetPg = CreatePage("Target")
 TargetPg.Visible = true
 
--- [[ صفحة Chaos - تدمير السيرفر ]]
+-- [[ صفحة Chaos - سحب الكل ]]
 local function AddChaosBtn(txt, func)
     local b = Instance.new("TextButton", ChaosPg)
     b.Size = UDim2.new(1, 0, 0, 40)
@@ -113,7 +122,6 @@ AddChaosBtn("نقل الكل | Bring All", function()
     end
 end)
 AddChaosBtn("تعليق الكل | Crash All", function() print("Server Crash Initiated") end)
-AddChaosBtn("لاغ السيرفر | Server Lag", function() print("Lagging Server...") end)
 Instance.new("UIListLayout", ChaosPg).Padding = UDim.new(0, 10)
 
 -- [[ صفحة Power - طيران وسرعة ]]
@@ -140,13 +148,6 @@ AddPowerInput("النطة الخارقة", 1000, "Jump")
 Instance.new("UIListLayout", PowerPg).Padding = UDim.new(0, 10)
 
 -- [[ صفحة Target - مربعات صغيرة ]]
-local T_Input = Instance.new("TextBox", TargetPg)
-T_Input.Size = UDim2.new(1, 0, 0, 35)
-T_Input.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
-T_Input.PlaceholderText = "اسم الضحية هنا..."
-T_Input.TextScaled = true
-ApplyStyle(T_Input, UDim.new(0, 6))
-
 local T_Grid = Instance.new("UIGridLayout", TargetPg)
 T_Grid.CellSize = UDim2.new(0, 85, 0, 85)
 T_Grid.CellPadding = UDim2.new(0, 12, 0, 12)
@@ -182,7 +183,7 @@ AddTab("Chaos", "التخريب | Chaos")
 AddTab("Power", "القوة | Power")
 AddTab("Target", "الهدف | Target")
 
--- نظام الإغفاء [cite: 2026-03-11]
+-- نظام الإغفاء والاختفاء [cite: 2026-03-11]
 OpenBtn.MouseButton1Click:Connect(function() Main.Visible = not Main.Visible end)
 UIS.InputBegan:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.MouseButton1 and Main.Visible then
