@@ -1,8 +1,8 @@
 --[[
-    Script: Ultimate Haki Eye-Detect V3 (Final)
+    Script: Ultimate Balanced Haki V3 (Final)
     Signed by: shma3h
     User ID: 1423181773906378814
-    Logic: Detect Haki Eye -> Fly Sky if Off -> Fly NPC if On
+    Logic: Smart Eye-Detect + Smooth Fly + Sky Recharge
 ]]
 
 local player = game.Players.LocalPlayer
@@ -11,7 +11,7 @@ local tweenService = game:GetService("TweenService")
 local runService = game:GetService("RunService")
 local isRunning = false
 
--- 1. حماية Anti-AFK (تمنع الطرد للخمول)
+-- 1. منع الطرد للخمول (Anti-AFK)
 local vu = game:GetService("VirtualUser")
 player.Idled:Connect(function()
     vu:CaptureController()
@@ -24,7 +24,7 @@ local function fastFly(targetCFrame)
     if char and char:FindFirstChild("HumanoidRootPart") then
         local root = char.HumanoidRootPart
         local distance = (root.Position - targetCFrame.Position).Magnitude
-        local speed = 380 -- سرعة طيران عالية
+        local speed = 380 
         local info = TweenInfo.new(distance / speed, Enum.EasingStyle.Linear)
         local tween = tweenService:Create(root, info, {CFrame = targetCFrame})
         tween:Play()
@@ -32,16 +32,10 @@ local function fastFly(targetCFrame)
     end
 end
 
--- 3. دالة فحص حالة الهاكي (هل العين ظاهرة؟)
+-- 3. دالة فحص حالة الهاكي (التنبؤ)
 local function isHakiActive()
     local char = player.Character
-    -- فحص التأثير البصري للهاكي في الشخصية (أدق طريقة في بلوكس فروت)
     if char and (char:FindFirstChild("ObservationHakiActivated") or char:FindFirstChild("HakiPower")) then
-        return true
-    end
-    -- فحص احتياطي عبر واجهة المستخدم
-    local pGui = player:FindFirstChild("PlayerGui")
-    if pGui and (pGui:FindFirstChild("HakiIndicator") or pGui:FindFirstChild("Observation")) then
         return true
     end
     return false
@@ -49,10 +43,10 @@ end
 
 -- 4. إنشاء الواجهة (UI) والزر
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
-screenGui.Name = "Shma3h_Ultimate_Haki"
+screenGui.Name = "Shma3h_Final_V3"
 screenGui.ResetOnSpawn = false
 
--- ميزة الخصوصية (تختفي عند الضغط في أي مكان)
+-- ميزة الاختفاء عند النقر في أي مكان
 local hideBtn = Instance.new("TextButton", screenGui)
 hideBtn.Size = UDim2.new(1, 0, 1, 0)
 hideBtn.BackgroundTransparency = 1
@@ -61,7 +55,7 @@ hideBtn.ZIndex = 0
 hideBtn.MouseButton1Click:Connect(function() screenGui.Enabled = false end)
 
 local main = Instance.new("Frame", screenGui)
-main.Size = UDim2.new(0, 260, 0, 180)
+main.Size = UDim2.new(0, 260, 0, 190)
 main.Position = UDim2.new(0.5, -130, 0.4, 0)
 main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 main.BorderSizePixel = 2
@@ -91,7 +85,6 @@ title.TextColor3 = Color3.new(1, 1, 1)
 title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 title.Font = Enum.Font.SourceSansBold
 
--- [[ الزر الرئيسي ]]
 local toggleBtn = Instance.new("TextButton", main)
 toggleBtn.Size = UDim2.new(0, 210, 0, 60)
 toggleBtn.Position = UDim2.new(0.5, -105, 0.35, 0)
@@ -101,14 +94,6 @@ toggleBtn.TextColor3 = Color3.new(1, 1, 1)
 toggleBtn.Font = Enum.Font.SourceSansBold
 toggleBtn.TextSize = 20
 
-local footer = Instance.new("TextLabel", main)
-footer.Size = UDim2.new(1, 0, 0, 40)
-footer.Position = UDim2.new(0, 0, 0.75, 0)
-footer.Text = "ID: 1423181773906378814\nطيران للسماء عند الشحن"
-footer.TextColor3 = Color3.new(1, 1, 1)
-footer.BackgroundTransparency = 1
-footer.TextSize = 10
-
 -- منطق الزر
 toggleBtn.MouseButton1Click:Connect(function()
     isRunning = not isRunning
@@ -116,21 +101,30 @@ toggleBtn.MouseButton1Click:Connect(function()
     toggleBtn.BackgroundColor3 = isRunning and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(180, 0, 0)
 end)
 
+local footer = Instance.new("TextLabel", main)
+footer.Size = UDim2.new(1, 0, 0, 40)
+footer.Position = UDim2.new(0, 0, 0.78, 0)
+footer.Text = "ID: 1423181773906378814\nطيران ذكي للسماء"
+footer.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+footer.BackgroundTransparency = 1
+footer.TextSize = 10
+
 -- 5. الحلقة الذكية (Logic)
 task.spawn(function()
+    local skyWait = false
     while true do
         if isRunning then
             pcall(function()
                 local char = player.Character
                 if not char then return end
 
-                -- محاولة تفعيل الهاكي دائماً (E)
+                -- تفعيل الهاكي (E)
                 vInput:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 task.wait(0.01)
                 vInput:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
-                -- فحص هل الهاكي شغال حالياً؟
                 if isHakiActive() then
+                    skyWait = false
                     -- الهاكي شغال: طر لأقرب بوت
                     local enemy = nil
                     for _, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
@@ -139,19 +133,25 @@ task.spawn(function()
                             break
                         end
                     end
-                    
                     if enemy then
                         fastFly(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
                     end
                 else
-                    -- الهاكي طافي: طر للسماء فوراً عشان تشحن
-                    local skyPos = char.HumanoidRootPart.CFrame * CFrame.new(0, 650, 0)
-                    fastFly(skyPos)
+                    -- الهاكي طافي: انتظر 1.5 ثانية للتأكيد قبل الطيران للسماء
+                    if not skyWait then
+                        task.wait(1.5) 
+                        skyWait = true
+                    end
+                    
+                    if not isHakiActive() then
+                        local skyPos = char.HumanoidRootPart.CFrame * CFrame.new(0, 700, 0)
+                        fastFly(skyPos)
+                    end
                 end
             end)
         end
-        task.wait(0.1) -- فحص سريع كل 0.1 ثانية
+        task.wait(0.2)
     end
 end)
 
-print("Haki Script by shma3h is FULLY READY.")
+print("Full V3 Script signed by: shma3h")
