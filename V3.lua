@@ -1,8 +1,8 @@
 --[[
-    Script: Pure Fly Haki Farm V3
+    Script: Pure Smart Haki V3 (Final & Smooth)
     Signed by: shma3h
     User ID: 1423181773906378814
-    Style: Redz / Moon Style (Direct Fly)
+    Style: No Checks / Pure Action
 ]]
 
 local player = game.Players.LocalPlayer
@@ -11,20 +11,20 @@ local tweenService = game:GetService("TweenService")
 local runService = game:GetService("RunService")
 local isRunning = false
 
--- 1. منع الطرد (Anti-AFK)
+-- 1. منع الطرد للخمول (Anti-AFK)
 local vu = game:GetService("VirtualUser")
 player.Idled:Connect(function()
     vu:CaptureController()
     vu:ClickButton2(Vector2.new())
 end)
 
--- 2. دالة الطيران السريع (Fast Tween)
+-- 2. دالة الطيران السريع (Tween Service)
 local function fastFly(targetCFrame)
     local char = player.Character
     if char and char:FindFirstChild("HumanoidRootPart") then
         local root = char.HumanoidRootPart
         local distance = (root.Position - targetCFrame.Position).Magnitude
-        local speed = 350 -- سرعة الطيران
+        local speed = 350 -- سرعة طيران متوازنة وسلسة
         local info = TweenInfo.new(distance / speed, Enum.EasingStyle.Linear)
         local tween = tweenService:Create(root, info, {CFrame = targetCFrame})
         tween:Play()
@@ -32,20 +32,28 @@ local function fastFly(targetCFrame)
     end
 end
 
--- 3. إنشاء الواجهة (UI) والزر
+-- 3. إنشاء الواجهة (UI) الاحترافية
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
-screenGui.Name = "Shma3h_PureFly_V3"
+screenGui.Name = "Shma3h_Final_V3"
 screenGui.ResetOnSpawn = false
 
+-- ميزة إخفاء الواجهة عند النقر في أي مكان (طلبك السابق)
+local hideBtn = Instance.new("TextButton", screenGui)
+hideBtn.Size = UDim2.new(1, 0, 1, 0)
+hideBtn.BackgroundTransparency = 1
+hideBtn.Text = ""
+hideBtn.ZIndex = 0
+hideBtn.MouseButton1Click:Connect(function() screenGui.Enabled = false end)
+
 local main = Instance.new("Frame", screenGui)
-main.Size = UDim2.new(0, 260, 0, 180)
+main.Size = UDim2.new(0, 260, 0, 190)
 main.Position = UDim2.new(0.5, -130, 0.4, 0)
 main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 main.BorderSizePixel = 2
 main.BorderColor3 = Color3.fromRGB(0, 255, 255)
 main.Active = true
 
--- نظام التحريك السلس
+-- نظام التحريك اليدوي للقائمة (Smooth Drag)
 local dragging, dragInput, dragStart, startPos
 main.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -63,11 +71,12 @@ end)
 
 local title = Instance.new("TextLabel", main)
 title.Size = UDim2.new(1, 0, 0, 45)
-title.Text = "PURE FLY V3 | shma3h"
+title.Text = "ULTIMATE HAKI | shma3h"
 title.TextColor3 = Color3.new(1, 1, 1)
 title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 title.Font = Enum.Font.SourceSansBold
 
+-- [[ زر التشغيل والإيقاف ]]
 local toggleBtn = Instance.new("TextButton", main)
 toggleBtn.Size = UDim2.new(0, 210, 0, 60)
 toggleBtn.Position = UDim2.new(0.5, -105, 0.35, 0)
@@ -77,26 +86,35 @@ toggleBtn.TextColor3 = Color3.new(1, 1, 1)
 toggleBtn.Font = Enum.Font.SourceSansBold
 toggleBtn.TextSize = 20
 
+local footer = Instance.new("TextLabel", main)
+footer.Size = UDim2.new(1, 0, 0, 40)
+footer.Position = UDim2.new(0, 0, 0.78, 0)
+footer.Text = "ID: 1423181773906378814\nتم بواسطة: شماعه"
+footer.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+footer.BackgroundTransparency = 1
+footer.TextSize = 10
+
+-- منطق الزر
 toggleBtn.MouseButton1Click:Connect(function()
     isRunning = not isRunning
     toggleBtn.Text = isRunning and "RUNNING (تشغيل)" or "START (إيقاف)"
     toggleBtn.BackgroundColor3 = isRunning and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(180, 0, 0)
 end)
 
--- 4. الحلقة الأساسية (طيران مباشر وبسيط)
+-- 4. الحلقة الأساسية (هجوم -> شحن في السماء)
 task.spawn(function()
     while true do
         if isRunning then
             pcall(function()
                 local char = player.Character
-                if not char then return end
+                if not char or not char:FindFirstChild("HumanoidRootPart") then return end
 
-                -- تفعيل الهاكي دائماً
+                -- تفعيل الهاكي (E) تلقائياً
                 vInput:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 task.wait(0.01)
                 vInput:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
-                -- البحث عن بوت
+                -- البحث عن بوت (NPC)
                 local enemy = nil
                 for _, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
                     if v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
@@ -107,18 +125,18 @@ task.spawn(function()
 
                 if enemy then
                     -- 1. طيران فوراً للبوت
-                    local toEnemy = fastFly(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2.5))
+                    local toEnemy = fastFly(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2.8))
                     if toEnemy then toEnemy.Completed:Wait() end
                     
-                    -- 2. خله يضربك 8 ثواني (تلفيل)
-                    task.wait(8)
+                    -- 2. خله يضربك 10 ثواني (عشان تتلفل)
+                    task.wait(10)
 
-                    -- 3. طيران فوق للسماء عشان يغير الجو ويشحن
+                    -- 3. طيران صاروخي للسماء (شحن وتغيير مكان)
                     local skyPos = char.HumanoidRootPart.CFrame * CFrame.new(0, 600, 0)
                     local toSky = fastFly(skyPos)
                     if toSky then toSky.Completed:Wait() end
                     
-                    -- 4. انتظر فوق 10 ثواني (شحن) ثم انزل للي بعده
+                    -- 4. انتظر فوق 10 ثواني يشحن الهاكي ثم كرر
                     task.wait(10)
                 end
             end)
@@ -127,4 +145,4 @@ task.spawn(function()
     end
 end)
 
-print("Pure Fly Script by shma3h is LIVE.")
+print("Smart Haki V3 Signed by shma3h is LIVE.")
