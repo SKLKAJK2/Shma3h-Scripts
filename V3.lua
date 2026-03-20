@@ -1,5 +1,5 @@
 --[[
-    Script: Full Auto-Observation Haki (One Click)
+    Script: Ultimate Haki Farm V3 (TP to NPC + Toggle)
     Signed by: shma3h
     User ID: 1423181773906378814
 ]]
@@ -7,87 +7,104 @@
 local player = game.Players.LocalPlayer
 local vInput = game:GetService("VirtualInputManager")
 local isRunning = false
+local scriptURL = "https://raw.githubusercontent.com/SKLKAJK2/Shma3h-Scripts/refs/heads/main/V3.lua"
 
--- إنشاء الواجهة (UI)
+-- 1. منع الطرد (Anti-AFK)
+local vu = game:GetService("VirtualUser")
+player.Idled:Connect(function()
+    vu:CaptureController()
+    vu:ClickButton2(Vector2.new())
+end)
+
+-- 2. إنشاء الواجهة (UI)
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
-screenGui.Name = "AutoHaki_shma3h"
+screenGui.Name = "Shma3h_System_V3"
 screenGui.ResetOnSpawn = false
 
--- ميزة إخفاء الواجهة (عند الضغط في أي مكان على الشاشة)
+-- ميزة الخصوصية (تختفي عند الضغط في أي مكان)
 local hideBtn = Instance.new("TextButton", screenGui)
 hideBtn.Size = UDim2.new(1, 0, 1, 0)
 hideBtn.BackgroundTransparency = 1
 hideBtn.Text = ""
-hideBtn.MouseButton1Click:Connect(function()
-    screenGui.Enabled = false
-end)
+hideBtn.ZIndex = 0
+hideBtn.MouseButton1Click:Connect(function() screenGui.Enabled = false end)
 
+-- الفريم الرئيسي (قابل للتحريك)
 local main = Instance.new("Frame", screenGui)
-main.Size = UDim2.new(0, 260, 0, 200)
+main.Size = UDim2.new(0, 260, 0, 180)
 main.Position = UDim2.new(0.5, -130, 0.4, 0)
-main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 main.BorderSizePixel = 2
 main.BorderColor3 = Color3.fromRGB(0, 255, 255)
+main.Active = true
+main.Draggable = true -- تفعيل ميزة تحريك الفريم
 
 local title = Instance.new("TextLabel", main)
 title.Size = UDim2.new(1, 0, 0, 45)
-title.Text = "AUTO HAKI PRO | shma3h"
+title.Text = "AUTO HAKI V3 | shma3h"
 title.TextColor3 = Color3.new(1, 1, 1)
-title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+title.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+title.Font = Enum.Font.SourceSansBold
 
-local startBtn = Instance.new("TextButton", main)
-startBtn.Size = UDim2.new(0, 200, 0, 60)
-startBtn.Position = UDim2.new(0.5, -100, 0.35, 0)
-startBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
-startBtn.Text = "تشغيل الكل (اضغط ونم)"
-startBtn.TextColor3 = Color3.new(1, 1, 1)
-startBtn.Font = Enum.Font.SourceSansBold
-startBtn.TextSize = 20
+-- زر التشغيل والإيقاف (Toggle)
+local toggleBtn = Instance.new("TextButton", main)
+toggleBtn.Size = UDim2.new(0, 200, 0, 60)
+toggleBtn.Position = UDim2.new(0.5, -100, 0.35, 0)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+toggleBtn.Text = "OFF (إيقاف)"
+toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+toggleBtn.Font = Enum.Font.SourceSansBold
+toggleBtn.TextSize = 22
 
-local info = Instance.new("TextLabel", main)
-info.Size = UDim2.new(1, 0, 0, 40)
-info.Position = UDim2.new(0, 0, 0.75, 0)
-info.Text = "ID: 1423181773906378814\nاضغط أي مكان للإخفاء"
-info.TextColor3 = Color3.new(0.7, 0.7, 0.7)
-info.BackgroundTransparency = 1
-info.TextSize = 12
+local footer = Instance.new("TextLabel", main)
+footer.Size = UDim2.new(1, 0, 0, 40)
+footer.Position = UDim2.new(0, 0, 0.75, 0)
+footer.Text = "ID: 1423181773906378814\n(اضغط أي مكان للإخفاء)"
+footer.TextColor3 = Color3.new(0.6, 0.6, 0.6)
+footer.BackgroundTransparency = 1
+footer.TextSize = 11
 
--- دالة التنقل التلقائي (Teleport) لمكان التلفيل
-local function teleportToHakiSpot()
-    local char = player.Character
-    if char and char:FindFirstChild("HumanoidRootPart") then
-        -- إحداثيات تقريبية لمنطقة Skylands (تأكد من لفل شخصيتك)
-        char.HumanoidRootPart.CFrame = CFrame.new(-4965, 300, -2825) 
-    end
-end
-
--- منطق التشغيل
-startBtn.MouseButton1Click:Connect(function()
+-- 3. منطق عمل الزر (تشغيل وإيقاف)
+toggleBtn.MouseButton1Click:Connect(function()
     isRunning = not isRunning
     if isRunning then
-        startBtn.Text = "شغال الآن..."
-        startBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-        teleportToHakiSpot() -- ينتقل للمكان أول ما تشغل
+        toggleBtn.Text = "ON (تشغيل)"
+        toggleBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+        -- استدعاء السكربت عبر loadstring
+        pcall(function() loadstring(game:HttpGet(scriptURL))() end)
     else
-        startBtn.Text = "تشغيل الكل (اضغط ونم)"
-        startBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
+        toggleBtn.Text = "OFF (إيقاف)"
+        toggleBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
     end
 end)
 
--- الحلقة التكرارية (Loop)
+-- 4. حلقة الانتقال للبوتات وتفعيل الهاكي
 spawn(function()
     while true do
         if isRunning then
-            -- تشغيل الهاكي تلقائياً
+            -- تفعيل الهاكي تلقائياً
             vInput:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-            wait(0.1)
+            wait(0.05)
             vInput:SendKeyEvent(false, Enum.KeyCode.E, false, game)
-            
-            -- فحص كل ثانيتين إذا كان يحتاج إعادة تفعيل
-            wait(2) 
+
+            -- ملاحقة البوتات (الانتقال خلفهم)
+            pcall(function()
+                local char = player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    for _, enemy in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                        if enemy:FindFirstChild("HumanoidRootPart") and enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 then
+                            -- الانتقال خلف البوت بمسافة بسيطة ليضربك
+                            char.HumanoidRootPart.CFrame = enemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                            break -- يركز على بوت واحد حتى تنتهي التفاديات
+                        end
+                    end
+                end
+            end)
+            wait(1.2) -- سرعة الانتقال
+        else
+            wait(1)
         end
-        wait(1)
     end
 end)
 
-print("Full Auto-Haki by shma3h is READY.")
+print("Toggle Script V3 signed by: shma3h")
