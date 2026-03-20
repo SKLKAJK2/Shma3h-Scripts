@@ -1,8 +1,8 @@
 --[[
-    Script: Ultimate Balanced Haki V3 (Final)
+    Script: Final Smart Haki V3 (Fixed Fly)
     Signed by: shma3h
     User ID: 1423181773906378814
-    Logic: Smart Eye-Detect + Smooth Fly + Sky Recharge
+    Protection: Anti-AFK, Smooth Tween, Eye-Check
 ]]
 
 local player = game.Players.LocalPlayer
@@ -11,42 +11,50 @@ local tweenService = game:GetService("TweenService")
 local runService = game:GetService("RunService")
 local isRunning = false
 
--- 1. منع الطرد للخمول (Anti-AFK)
+-- 1. منع الطرد (Anti-AFK)
 local vu = game:GetService("VirtualUser")
 player.Idled:Connect(function()
     vu:CaptureController()
     vu:ClickButton2(Vector2.new())
 end)
 
--- 2. دالة الطيران السريع (Fast Fly Tween)
+-- 2. دالة الطيران السريع (Fly Tween)
 local function fastFly(targetCFrame)
     local char = player.Character
     if char and char:FindFirstChild("HumanoidRootPart") then
         local root = char.HumanoidRootPart
         local distance = (root.Position - targetCFrame.Position).Magnitude
-        local speed = 380 
-        local info = TweenInfo.new(distance / speed, Enum.EasingStyle.Linear)
+        -- سرعة احترافية لمنع الـ Kick
+        local info = TweenInfo.new(distance / 380, Enum.EasingStyle.Linear)
         local tween = tweenService:Create(root, info, {CFrame = targetCFrame})
         tween:Play()
         return tween
     end
 end
 
--- 3. دالة فحص حالة الهاكي (التنبؤ)
-local function isHakiActive()
+-- 3. دالة فحص الهاكي الذكية (تمنع الطيران الفوري)
+local function isHakiRunning()
     local char = player.Character
+    -- فحص إذا كان تأثير الهاكي شغال فعلياً في الشخصية
     if char and (char:FindFirstChild("ObservationHakiActivated") or char:FindFirstChild("HakiPower")) then
         return true
     end
+    
+    -- فحص إضافي عبر واجهة المستخدم (العين)
+    local pGui = player:FindFirstChild("PlayerGui")
+    if pGui and (pGui:FindFirstChild("HakiIndicator") or pGui:FindFirstChild("Observation")) then
+        return true
+    end
+    
     return false
 end
 
 -- 4. إنشاء الواجهة (UI) والزر
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
-screenGui.Name = "Shma3h_Final_V3"
+screenGui.Name = "Shma3h_Fixed_V3"
 screenGui.ResetOnSpawn = false
 
--- ميزة الاختفاء عند النقر في أي مكان
+-- ميزة إخفاء الواجهة عند النقر
 local hideBtn = Instance.new("TextButton", screenGui)
 hideBtn.Size = UDim2.new(1, 0, 1, 0)
 hideBtn.BackgroundTransparency = 1
@@ -118,12 +126,12 @@ task.spawn(function()
                 local char = player.Character
                 if not char then return end
 
-                -- تفعيل الهاكي (E)
+                -- محاولة تفعيل الهاكي (E)
                 vInput:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 task.wait(0.01)
                 vInput:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
-                if isHakiActive() then
+                if isHakiRunning() then
                     skyWait = false
                     -- الهاكي شغال: طر لأقرب بوت
                     local enemy = nil
@@ -137,13 +145,13 @@ task.spawn(function()
                         fastFly(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
                     end
                 else
-                    -- الهاكي طافي: انتظر 1.5 ثانية للتأكيد قبل الطيران للسماء
+                    -- الهاكي طافي: انتظر 1.5 ثانية للتأكيد قبل الطيران للسماء (عشان ما يطير فجأة)
                     if not skyWait then
                         task.wait(1.5) 
                         skyWait = true
                     end
                     
-                    if not isHakiActive() then
+                    if not isHakiRunning() then
                         local skyPos = char.HumanoidRootPart.CFrame * CFrame.new(0, 700, 0)
                         fastFly(skyPos)
                     end
@@ -154,4 +162,4 @@ task.spawn(function()
     end
 end)
 
-print("Full V3 Script signed by: shma3h")
+print("Full V3 Script by shma3h is LIVE.")
