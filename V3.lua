@@ -1,104 +1,93 @@
 --[[
-    Script: Haki Leveler with Toggle UI
+    Script: Full Auto-Observation Haki (One Click)
     Signed by: shma3h
     User ID: 1423181773906378814
 ]]
 
 local player = game.Players.LocalPlayer
 local vInput = game:GetService("VirtualInputManager")
-local isRunning = false -- حالة السكربت الافتراضية
+local isRunning = false
 
--- إنشاء الواجهة
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "Haki_shma3h_Pro"
-screenGui.Parent = player.PlayerGui
+-- إنشاء الواجهة (UI)
+local screenGui = Instance.new("ScreenGui", player.PlayerGui)
+screenGui.Name = "AutoHaki_shma3h"
 screenGui.ResetOnSpawn = false
 
--- الزر الشفاف للإخفاء (عند الضغط في أي مكان)
-local invisibleHide = Instance.new("TextButton")
-invisibleHide.Size = UDim2.new(1, 0, 1, 0)
-invisibleHide.BackgroundTransparency = 1
-invisibleHide.Text = ""
-invisibleHide.Parent = screenGui
+-- ميزة إخفاء الواجهة (عند الضغط في أي مكان على الشاشة)
+local hideBtn = Instance.new("TextButton", screenGui)
+hideBtn.Size = UDim2.new(1, 0, 1, 0)
+hideBtn.BackgroundTransparency = 1
+hideBtn.Text = ""
+hideBtn.MouseButton1Click:Connect(function()
+    screenGui.Enabled = false
+end)
 
--- الإطار الرئيسي
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 260, 0, 220)
-mainFrame.Position = UDim2.new(0.5, -130, 0.4, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-mainFrame.BorderSizePixel = 2
-mainFrame.BorderColor3 = Color3.fromRGB(0, 255, 127)
-mainFrame.Parent = screenGui
+local main = Instance.new("Frame", screenGui)
+main.Size = UDim2.new(0, 260, 0, 200)
+main.Position = UDim2.new(0.5, -130, 0.4, 0)
+main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+main.BorderSizePixel = 2
+main.BorderColor3 = Color3.fromRGB(0, 255, 255)
 
--- العنوان
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 40)
-title.Text = "Haki Leveler | shma3h"
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, 0, 0, 45)
+title.Text = "AUTO HAKI PRO | shma3h"
 title.TextColor3 = Color3.new(1, 1, 1)
-title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-title.Parent = mainFrame
+title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 
--- زر التشغيل والإيقاف (Toggle Button)
-local toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(0, 200, 0, 50)
-toggleBtn.Position = UDim2.new(0.5, -100, 0.35, 0)
-toggleBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50) -- أحمر في البداية (إيقاف)
-toggleBtn.Text = "Status: OFF"
-toggleBtn.TextColor3 = Color3.new(1, 1, 1)
-toggleBtn.Font = Enum.Font.SourceSansBold
-toggleBtn.TextSize = 20
-toggleBtn.Parent = mainFrame
+local startBtn = Instance.new("TextButton", main)
+startBtn.Size = UDim2.new(0, 200, 0, 60)
+startBtn.Position = UDim2.new(0.5, -100, 0.35, 0)
+startBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
+startBtn.Text = "تشغيل الكل (اضغط ونم)"
+startBtn.TextColor3 = Color3.new(1, 1, 1)
+startBtn.Font = Enum.Font.SourceSansBold
+startBtn.TextSize = 20
 
--- معلومات الـ ID
-local idInfo = Instance.new("TextLabel")
-idInfo.Size = UDim2.new(1, 0, 0, 30)
-idInfo.Position = UDim2.new(0, 0, 0.65, 0)
-idInfo.Text = "ID: 1423181773906378814"
-idInfo.TextColor3 = Color3.fromRGB(180, 180, 180)
-idInfo.BackgroundTransparency = 1
-idInfo.Parent = mainFrame
+local info = Instance.new("TextLabel", main)
+info.Size = UDim2.new(1, 0, 0, 40)
+info.Position = UDim2.new(0, 0, 0.75, 0)
+info.Text = "ID: 1423181773906378814\nاضغط أي مكان للإخفاء"
+info.TextColor3 = Color3.new(0.7, 0.7, 0.7)
+info.BackgroundTransparency = 1
+info.TextSize = 12
 
-local hint = Instance.new("TextLabel")
-hint.Size = UDim2.new(1, 0, 0, 30)
-hint.Position = UDim2.new(0, 0, 0.85, 0)
-hint.Text = "اضغط في أي مكان لإخفاء هذه القائمة"
-hint.TextColor3 = Color3.new(0.7, 0.7, 0.7)
-hint.TextSize = 11
-hint.BackgroundTransparency = 1
-hint.Parent = mainFrame
+-- دالة التنقل التلقائي (Teleport) لمكان التلفيل
+local function teleportToHakiSpot()
+    local char = player.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        -- إحداثيات تقريبية لمنطقة Skylands (تأكد من لفل شخصيتك)
+        char.HumanoidRootPart.CFrame = CFrame.new(-4965, 300, -2825) 
+    end
+end
 
--- منطق الزر (Toggle)
-toggleBtn.MouseButton1Click:Connect(function()
+-- منطق التشغيل
+startBtn.MouseButton1Click:Connect(function()
     isRunning = not isRunning
     if isRunning then
-        toggleBtn.Text = "Status: ON"
-        toggleBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50) -- أخضر عند التشغيل
+        startBtn.Text = "شغال الآن..."
+        startBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+        teleportToHakiSpot() -- ينتقل للمكان أول ما تشغل
     else
-        toggleBtn.Text = "Status: OFF"
-        toggleBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50) -- أحمر عند الإيقاف
+        startBtn.Text = "تشغيل الكل (اضغط ونم)"
+        startBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
     end
 end)
 
--- منطق إخفاء الواجهة عند النقر في أي مكان
-invisibleHide.MouseButton1Click:Connect(function()
-    screenGui.Enabled = false
-    print("UI hidden for privacy.")
-end)
-
--- وظيفة تلفيل الهاكي الخلفية
+-- الحلقة التكرارية (Loop)
 spawn(function()
     while true do
         if isRunning then
-            -- ضغط مفتاح E لتفعيل هاكي التنبؤ
+            -- تشغيل الهاكي تلقائياً
             vInput:SendKeyEvent(true, Enum.KeyCode.E, false, game)
             wait(0.1)
             vInput:SendKeyEvent(false, Enum.KeyCode.E, false, game)
             
-            -- انتظار إعادة الشحن (يمكنك تقليل الوقت حسب لفل الهاكي عندك)
-            wait(6) 
+            -- فحص كل ثانيتين إذا كان يحتاج إعادة تفعيل
+            wait(2) 
         end
         wait(1)
     end
 end)
 
-print("Script signed by: shma3h")
+print("Full Auto-Haki by shma3h is READY.")
