@@ -1,8 +1,8 @@
 --[[
-    Script: Final Stable Haki V6
+    Script: Final Stable Haki V6 (Fixed Save)
     Signed by: shma3h
     User ID: 1423181773906378814
-    Fix: Stop Fly-Back Loop / Locked NPC Target
+    Fix: Fly-Back Loop / High Stability
 ]]
 
 local player = game.Players.LocalPlayer
@@ -18,7 +18,7 @@ player.Idled:Connect(function()
     vu:ClickButton2(Vector2.new())
 end)
 
--- 2. دالة الطيران (Tween) - معدلة للثبات
+-- 2. دالة الطيران السلس
 local function fastFly(targetCFrame)
     local char = player.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
@@ -31,7 +31,7 @@ local function fastFly(targetCFrame)
     end
 end
 
--- 3. دالة فحص العداد (2/2) بدقة عالية
+-- 3. فحص العداد (2/2) بدقة
 local function getDodgeCount()
     local count = 0
     pcall(function()
@@ -47,12 +47,12 @@ local function getDodgeCount()
     return count
 end
 
--- 4. الواجهة (UI)
+-- 4. واجهة المستخدم (UI)
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
 screenGui.Name = "Shma3h_Stable_V6"
 screenGui.ResetOnSpawn = false
 
--- إخفاء القائمة عند النقر
+-- إخفاء عند النقر
 local hideBtn = Instance.new("TextButton", screenGui)
 hideBtn.Size = UDim2.new(1, 0, 1, 0)
 hideBtn.BackgroundTransparency = 1
@@ -81,7 +81,7 @@ toggleBtn.MouseButton1Click:Connect(function()
     toggleBtn.BackgroundColor3 = isRunning and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- 5. الحلقة الأساسية (حل مشكلة التذبذب)
+-- 5. الحلقة الأساسية (تثبيت الهدف)
 task.spawn(function()
     while true do
         if isRunning then
@@ -89,15 +89,11 @@ task.spawn(function()
                 local char = player.Character
                 if not char or not char:FindFirstChild("HumanoidRootPart") then return end
 
-                -- تشغيل الهاكي (E)
                 vInput:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 task.wait(0.01)
                 vInput:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
-                local dodges = getDodgeCount()
-
-                if dodges > 0 then
-                    -- الهاكي شغال: ابحث عن بوت والتصق فيه
+                if getDodgeCount() > 0 then
                     local enemy = nil
                     for _, v in pairs(game.Workspace:GetDescendants()) do
                         if v:IsA("Humanoid") and v.Parent:FindFirstChild("HumanoidRootPart") and v.Health > 0 then
@@ -110,17 +106,11 @@ task.spawn(function()
                     
                     if enemy then
                         fastFly(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
-                        -- يبقى عند البوت لين التفادي يوصل 0 (عشان ما يطير ويرجع)
-                        repeat 
-                            task.wait(0.2) 
-                        until getDodgeCount() == 0 or not isRunning
+                        repeat task.wait(0.2) until getDodgeCount() == 0 or not isRunning
                     end
                 else
-                    -- التفادي 0: طر للسماء واجلس فوق لين يشحن كامل (مو بس 1)
                     fastFly(char.HumanoidRootPart.CFrame * CFrame.new(0, 750, 0))
-                    repeat 
-                        task.wait(1) 
-                    until getDodgeCount() >= 2 or not isRunning -- ينتظر لين يشحن الـ 2 كاملة
+                    repeat task.wait(1) until getDodgeCount() >= 2 or not isRunning
                 end
             end)
         end
