@@ -1,5 +1,5 @@
 --[[
-    Script: ULTIMATE FORCED HAKI V7
+    Script: ULTIMATE FORCED HAKI V7 (Morning Update)
     Signed by: shma3h
     User ID: 1423181773906378814
     Fix: No More Fly-Back Loop / Timer-Based Logic
@@ -18,7 +18,7 @@ player.Idled:Connect(function()
     vu:ClickButton2(Vector2.new())
 end)
 
--- 2. دالة الطيران السلس (Tween)
+-- 2. دالة الطيران السريع
 local function fastFly(targetCFrame)
     local char = player.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
@@ -31,12 +31,12 @@ local function fastFly(targetCFrame)
     end
 end
 
--- 3. واجهة المستخدم (UI) الملكية
+-- 3. واجهة المستخدم (UI)
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
 screenGui.Name = "Shma3h_Ultimate_V7"
 screenGui.ResetOnSpawn = false
 
--- نظام إخفاء الواجهة عند النقر في أي مكان
+-- إخفاء الواجهة عند النقر في أي مكان
 local hideBtn = Instance.new("TextButton", screenGui)
 hideBtn.Size = UDim2.new(1, 0, 1, 0)
 hideBtn.BackgroundTransparency = 1
@@ -73,7 +73,6 @@ title.Size = UDim2.new(1, 0, 0, 45)
 title.Text = "ULTIMATE V7 | shma3h"
 title.TextColor3 = Color3.new(1, 1, 1)
 title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-title.Font = Enum.Font.SourceSansBold
 
 local toggleBtn = Instance.new("TextButton", main)
 toggleBtn.Size = UDim2.new(0, 210, 0, 60)
@@ -81,7 +80,6 @@ toggleBtn.Position = UDim2.new(0.5, -105, 0.4, 0)
 toggleBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
 toggleBtn.Text = "START HAKI FARM"
 toggleBtn.TextColor3 = Color3.new(1, 1, 1)
-toggleBtn.Font = Enum.Font.SourceSansBold
 toggleBtn.TextSize = 18
 
 toggleBtn.MouseButton1Click:Connect(function()
@@ -90,7 +88,7 @@ toggleBtn.MouseButton1Click:Connect(function()
     toggleBtn.BackgroundColor3 = isRunning and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- 4. الحلقة الأساسية (تثبيت إجباري بالوقت)
+-- 4. الحلقة الأساسية (نظام الوقت الإجباري)
 task.spawn(function()
     while true do
         if isRunning then
@@ -103,7 +101,7 @@ task.spawn(function()
                 task.wait(0.01)
                 vInput:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
-                -- البحث عن أقرب بوت في كل الـ Workspace
+                -- البحث عن أي بوت في الماب
                 local enemy = nil
                 for _, v in pairs(game.Workspace:GetDescendants()) do
                     if v:IsA("Humanoid") and v.Parent:FindFirstChild("HumanoidRootPart") and v.Health > 0 then
@@ -115,18 +113,18 @@ task.spawn(function()
                 end
                 
                 if enemy then
-                    -- 1. طيران فوراً للبوت
+                    -- 1. طيران للبوت
                     local flyTo = fastFly(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
                     if flyTo then flyTo.Completed:Wait() end
                     
-                    -- 2. تثبيت إجباري عند البوت (10 ثواني) لتلفيل الهاكي
+                    -- 2. اجلس عند البوت 10 ثواني (غصب)
                     task.wait(10)
 
-                    -- 3. هروب إجباري للسماء (800 متر فوق)
+                    -- 3. طيران للسماء (800 متر فوق)
                     local skyFly = fastFly(char.HumanoidRootPart.CFrame * CFrame.new(0, 800, 0))
                     if skyFly then skyFly.Completed:Wait() end
                     
-                    -- 4. انتظار شحن الهاكي فوق (12 ثانية)
+                    -- 4. اجلس فوق 12 ثانية (شحن غصب)
                     task.wait(12)
                 end
             end)
@@ -134,5 +132,3 @@ task.spawn(function()
         task.wait(0.5)
     end
 end)
-
-print("Final V7 Signed by shma3h is READY.")
