@@ -1,8 +1,8 @@
 --[[
-    Script: ULTIMATE FORCED HAKI V7 (Morning Update)
+    Script: ULTIMATE HAKI V8 (Toggle Button Edition)
     Signed by: shma3h
     User ID: 1423181773906378814
-    Fix: No More Fly-Back Loop / Timer-Based Logic
+    Fix: Added Open/Close Button / Removed Click-to-Hide
 ]]
 
 local player = game.Players.LocalPlayer
@@ -31,19 +31,25 @@ local function fastFly(targetCFrame)
     end
 end
 
--- 3. واجهة المستخدم (UI)
+-- 3. واجهة المستخدم (UI) مع زر الفتح والقفل
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
-screenGui.Name = "Shma3h_Ultimate_V7"
+screenGui.Name = "Shma3h_Pro_V8"
 screenGui.ResetOnSpawn = false
 
--- إخفاء الواجهة عند النقر في أي مكان
-local hideBtn = Instance.new("TextButton", screenGui)
-hideBtn.Size = UDim2.new(1, 0, 1, 0)
-hideBtn.BackgroundTransparency = 1
-hideBtn.Text = ""
-hideBtn.ZIndex = 0
-hideBtn.MouseButton1Click:Connect(function() screenGui.Enabled = false end)
+-- [[ الزر الصغير لفتح وقفل القائمة ]]
+local toggleGuiBtn = Instance.new("TextButton", screenGui)
+toggleGuiBtn.Size = UDim2.new(0, 50, 0, 50)
+toggleGuiBtn.Position = UDim2.new(0.02, 0, 0.4, 0) -- مكانه في يسار الشاشة
+toggleGuiBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+toggleGuiBtn.Text = "S"
+toggleGuiBtn.TextColor3 = Color3.new(0, 0, 0)
+toggleGuiBtn.Font = Enum.Font.SourceSansBold
+toggleGuiBtn.TextSize = 25
+-- جعل الزر دائري قليلاً
+local corner = Instance.new("UICorner", toggleGuiBtn)
+corner.CornerRadius = ToolPoint.new(0, 25)
 
+-- [[ الفريم الأساسي ]]
 local main = Instance.new("Frame", screenGui)
 main.Size = UDim2.new(0, 260, 0, 190)
 main.Position = UDim2.new(0.5, -130, 0.4, 0)
@@ -51,8 +57,14 @@ main.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 main.BorderSizePixel = 2
 main.BorderColor3 = Color3.fromRGB(0, 255, 255)
 main.Active = true
+main.Visible = true -- يبدأ وهو ظاهر
 
--- نظام السحب (Drag)
+-- منطق زر الفتح والقفل
+toggleGuiBtn.MouseButton1Click:Connect(function()
+    main.Visible = not main.Visible
+end)
+
+-- نظام السحب (Drag) للفريم
 local dragging, dragInput, dragStart, startPos
 main.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -70,7 +82,7 @@ end)
 
 local title = Instance.new("TextLabel", main)
 title.Size = UDim2.new(1, 0, 0, 45)
-title.Text = "ULTIMATE V7 | shma3h"
+title.Text = "HAKI V8 | shma3h"
 title.TextColor3 = Color3.new(1, 1, 1)
 title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 
@@ -96,7 +108,7 @@ task.spawn(function()
                 local char = player.Character
                 if not char or not char:FindFirstChild("HumanoidRootPart") then return end
 
-                -- تشغيل الهاكي (E)
+                -- تفعيل الهاكي (E)
                 vInput:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 task.wait(0.01)
                 vInput:SendKeyEvent(false, Enum.KeyCode.E, false, game)
@@ -117,7 +129,7 @@ task.spawn(function()
                     local flyTo = fastFly(enemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
                     if flyTo then flyTo.Completed:Wait() end
                     
-                    -- 2. اجلس عند البوت 10 ثواني (غصب)
+                    -- 2. اجلس عند البوت 10 ثواني (غصب) لتلفيل الهاكي
                     task.wait(10)
 
                     -- 3. طيران للسماء (800 متر فوق)
